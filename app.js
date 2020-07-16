@@ -18,10 +18,15 @@ mongoose.connect('mongodb://localhost:27017/wikiDB', {
   useUnifiedTopology: true,
 });
 
-const articleSchema = {
-  title: String,
-  content: String,
-};
+const articleSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+  },
+});
 
 const Article = mongoose.model('Article', articleSchema);
 
@@ -51,7 +56,7 @@ app
       if (!err) {
         res.json({ success: true, data: newArticle });
       } else {
-        res.send(err);
+        res.status(400).send('Title and content is required!!');
       }
     });
   })
@@ -76,7 +81,7 @@ app
       if (foundArticle) {
         res.send(foundArticle);
       } else {
-        res.send('No article found with this ID, Retry!');
+        res.status(404).send('No article found with this ID, Retry!');
       }
     });
   })
@@ -89,6 +94,9 @@ app
       function (err) {
         if (!err) {
           res.send('Successfully updated the selected article.');
+          // res.send({ success: true, data: Article });
+        } else {
+          res.status(400).send('Check article Id properly!');
         }
       }
     );
@@ -97,9 +105,10 @@ app
   .patch(function (req, res) {
     Article.update({ _id: req.params.id }, { $set: req.body }, function (err) {
       if (!err) {
-        res.send('Successfully updated article.');
+        res.status(200).send('Successfully updated article.');
       } else {
-        res.send(err);
+        // res.send(err);
+        res.status(400).send('Error');
       }
     });
   })
@@ -107,9 +116,9 @@ app
   .delete(function (req, res) {
     Article.deleteOne({ _id: req.params.id }, function (err) {
       if (!err) {
-        res.json({ success: true });
+        res.status(200).json({ success: true });
       } else {
-        res.send(err);
+        res.status(404).send(err);
       }
     });
   });
