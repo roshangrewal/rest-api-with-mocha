@@ -10,4 +10,4 @@
 
 `npm run start`
 
-![Test Output](Screenshot from 2020-07-16 19-58-27.png)
+![Test Output](https://github.com/roshangrewal/rest-api-with-mocha/blob/master/Screenshot%20from%202020-07-16%2019-58-27.png)
