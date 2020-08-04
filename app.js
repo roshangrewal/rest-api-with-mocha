@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 
+// App Initialization
 const app = express();
 
 app.use(
@@ -13,6 +16,7 @@ app.use(
 );
 app.use(express.static('public'));
 
+// MongoDB Setup
 mongoose.connect('mongodb://localhost:27017/wikiDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -29,6 +33,77 @@ const articleSchema = new mongoose.Schema({
 });
 
 const Article = mongoose.model('Article', articleSchema);
+
+// Swagger Documentation Guide https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'REST API Prac',
+      description:
+        'REST API with Mocha and Swagger Docs. Basic plain application to test anything. Code @ [https://github.com/roshangrewal/rest-api-with-mocha](https://github.com/roshangrewal/rest-api-with-mocha) ',
+      contact: {
+        email: 'me@abc.xyz',
+      },
+      license: {
+        name: 'Apache 2.0',
+        url: 'http://www.apache.org/licenses/LICENSE-2.0.html',
+      },
+    },
+    servers: {
+      description: 'SwaggerHub API Auto Mocking',
+      url: 'http://localhost:3000/api-docs/',
+      url: 'http://localhost:3000',
+    },
+  },
+  // routes path eg ['.routes/*.js']
+  apis: ['app.js'],
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+
+// Docs generation
+/**
+ * tags:
+  - name: articles
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+ */
+/**
+ * @swagger
+ * /articles:
+ *   get:
+ *     tags:
+ *       - articles
+ *     description: get all the articles
+ *     responses:
+ *       '200':
+ *         description: A suceessful response
+ */
+
+/**
+ * @swagger
+ * /articles:
+ *   post:
+ *     description: publish articles
+ *     responses:
+ *       '200':
+ *         description: A suceessful response
+ */
+
+/**
+ * @swagger
+ * /articles:
+ *   delete:
+ *     description: delete all the articles
+ *     responses:
+ *       '200':
+ *         description: A suceessful response
+ */
 
 // Requests Targetting all Articles
 app
